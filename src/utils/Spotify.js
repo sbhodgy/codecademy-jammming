@@ -60,6 +60,58 @@ const Spotify = {
                 }))
             }
         )
+    },
+
+    savePlaylist(playlistName, trackURIS) {
+        if (!playlistName && !trackURIS.length) {
+            return;
+        }
+
+        const accessToken = Spotify.getAccessToken();
+        const headers = {
+            Authorization : `Bearer ${accessToken}`
+        };
+        let userID = "";
+
+        let url = "https://api.spotify.com/v1/me";
+        return fetch(url, {
+            headers : headers
+        }).then(response => {
+            return response.json();
+        }).then(jsonResponse => {
+            console.log("What is the error in savePlaylist() ::  " + jsonResponse);
+            // Got userID, now lets use the userID to create a new playlist
+            userID = jsonResponse.id;
+            let createPlaylistURL = `https://api.spotify.com/v1/users/${userID}/playlists`;
+
+            return fetch(createPlaylistURL, {
+                    headers : headers,
+                    method : "POST",
+                    body: JSON.stringify({ name : playlistName })
+                }).then(response => {
+                return response.json();
+            }).then(jsonResponse => {
+
+                // Created a new playlist, now lets add tracks to the same playlist we just created
+                let playlistID = jsonResponse.id;
+                let addTrackToPlaylistURL =`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`;
+
+                return fetch(addTrackToPlaylistURL, {
+                    headers : {
+                        Authorization : `Bearer ${accessToken}`
+                    },
+                    method : "POST",
+                    body : JSON.stringify({
+                        uris : trackURIS
+                    })
+                }).then(response => {
+                    return response.json();
+                }).then(jsonResponse => {
+                    playlistID = jsonResponse.id;
+                })
+
+            })
+        })
     }
 }
 
