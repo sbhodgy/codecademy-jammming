@@ -1,8 +1,8 @@
-import Creds from './Creds'
+// import Creds from './Creds'
 
 let accessToken = ""
-const clientID = Creds.clientID
-const redirectURI = Creds.redirectURI
+const clientID = "a63bf8796a864d84ab4a91d598bf886a"
+const redirectURI = "http://localhost:3000/"
 
 const Spotify = {
 
